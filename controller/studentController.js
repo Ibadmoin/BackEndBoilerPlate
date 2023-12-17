@@ -201,7 +201,38 @@ const StudentController = {
       return res.status(500).json({ message: 'Internal server error.', error: err.message });
     }
   },
-
+ async getHistory(req,res){
+    try {
+      const studentId = req.query.studentId;
+  
+      if (!studentId) {
+        return res.status(400).json({ message: 'Student ID is required.' });
+      }
+  
+      // Find the student by ID
+      const student = await Student.findById(studentId);
+  
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+  
+      // Retrieve attendance records for the student
+      const attendanceHistory = await Attendance.find({
+        student: studentId,
+      });
+  
+      // You can customize the data you want to send to the client
+      const formattedAttendanceHistory = attendanceHistory.map((record) => ({
+        date: record.date,
+        status: record.status,
+      }));
+  
+      return res.status(200).json({ attendanceHistory: formattedAttendanceHistory });
+    } catch (err) {
+      return res.status(500).json({ message: 'Internal server error.', error: err.message });
+    }
+  
+  }
 
 
 
