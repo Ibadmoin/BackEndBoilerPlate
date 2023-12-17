@@ -113,7 +113,6 @@ const StudentController = {
           }
 
           // Comparing provided Password with Stored hashed password
-          console.log(user.password)
 
           const isPasswordValid = await bcrypt.compare(password, student.password);
           console.log(chalk.red(isPasswordValid))
@@ -130,9 +129,13 @@ const StudentController = {
 
 
       }catch(err){
-          res.status(500).json({message: "Internal server error.", error: err.message});
+          res.status(500).json({message: "Internal server error iba.", error: err.message});
       }
   },
+
+  async  getAllStudent(req,res){
+
+  }
 
   
     
