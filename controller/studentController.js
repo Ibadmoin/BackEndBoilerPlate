@@ -133,6 +133,8 @@ const StudentController = {
           // generating a JWt token and set is as a cookie
           const token = jwt.sign(email);
 
+          res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 15000 });
+
           // Successfully login status
           return res.status(200).json({message: "Login Successfully.",student,token})
 
@@ -199,7 +201,7 @@ const StudentController = {
       return res.status(500).json({ message: 'Internal server error.', error: err.message });
     }
   },
-  
+
 
 
 
