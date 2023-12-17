@@ -3,7 +3,8 @@ const Attendance = require('../model/attendanceModel')
 const Joi = require("joi")
 const bcrypt = require("bcrypt")
 const chalk = require('chalk');
-const jwt = require('../utils/jwt')
+const jwt = require('../utils/jwt');
+const mongoose = require('mongoose')
 
 
 // Password validation schema Through joi
