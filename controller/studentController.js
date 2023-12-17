@@ -54,7 +54,7 @@ const signupSchema = Joi.object({
 
 //checkinschema
 const checkinSchema = Joi.object({
-  objectId : Joi.string().required(),
+  studentId: Joi.string().required(),
  
 })
 
