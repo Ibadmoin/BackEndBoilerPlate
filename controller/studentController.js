@@ -6,7 +6,6 @@ const chalk = require('chalk');
 const jwt = require('../utils/jwt');
 const mongoose = require('mongoose')
 const { startOfDay, endOfDay } = require('date-fns');
-const mail = require('../utils/mail')
 
 
 // Password validation schema Through joi
