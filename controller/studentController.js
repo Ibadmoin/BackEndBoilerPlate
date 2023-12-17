@@ -91,7 +91,48 @@ const StudentController = {
         }
 
 
+      },
+
+       // Login Req
+    async login(req,res){
+      try{
+
+          // Validating the req body using the login schema
+          const {error} = loginSchema.validate(req.body);
+
+          if(error){
+              return res.status(400).json({message: error.details[0].message});
+          }
+
+          const {email, password}= req.body
+          // Find the user  by email
+          const student = await Student.findOne({email});
+
+          if(!student){
+              return res.status(400).json({message:"Invalid email or password"});
+          }
+
+          // Comparing provided Password with Stored hashed password
+          console.log(user.password)
+
+          const isPasswordValid = await bcrypt.compare(password, student.password);
+          console.log(chalk.red(isPasswordValid))
+          if(!isPasswordValid){
+              return res.status(400).json({message:"Invalid Password"})
+          }
+
+          // generating a JWt token and set is as a cookie
+          const token = jwt.sign(email);
+
+          // Successfully login status
+          return res.status(200).json({message: "Login Successfully.",user,token})
+
+
+
+      }catch(err){
+          res.status(500).json({message: "Internal server error.", error: err.message});
       }
+  },
 
   
     
