@@ -125,7 +125,7 @@ const StudentController = {
           const token = jwt.sign(email);
 
           // Successfully login status
-          return res.status(200).json({message: "Login Successfully.",user,token})
+          return res.status(200).json({message: "Login Successfully.",student,token})
 
 
 
