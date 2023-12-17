@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
 const Product = require('../model/productModel');
+const Student = require('../model/stdModel');
 const fs = require('fs').promises;
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
@@ -21,7 +22,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'products', // optional, if you want to organize uploads in Cloudinary
+        folder: 'Student', // optional, if you want to organize uploads in Cloudinary
         format: async (req, file) => 'png', // file format (you can change it as needed)
         public_id: (req, file) => `${file.originalname}-${Date.now()}`, // unique identifier for each file
     },
@@ -44,29 +45,34 @@ async function bulkUpload() {
 
         const data = await fs.readFile('./product.json', 'utf8');
         const jsonData = JSON.parse(data);
-        const products = jsonData.products;
+        const user = jsonData.user;
 
         // Loop through products and save them to the database
-        for (const productData of products) {
-            const { name, price, volume, stars, description, image } = productData;
+        for (const userdata of user) {
+            const { name, email, password, phone, profilePicture, course } = userdata;
 
             try {
-                const cloudinaryResponse = await cloudinary.uploader.upload(image, {
-                    folder: 'products',
-                    public_id: `${name}-${Date.now()}`,
-                });
+                try{
+                    const cloudinaryResponse = await cloudinary.uploader.upload(profilePicture, {
+                        folder: 'Student',
+                        public_id: `${name}-${Date.now()}`,
+                    });
+                }catch(e){
+                    console.log(e);
+                }
+                
 
-                const newProduct = new Product({
+                const newStudent = new Student({
                     name,
-                    price,
-                    volume,
-                    stars,
-                    desc,
-                    imageUrl: cloudinaryResponse.secure_url,
+                    email,
+                    phone,
+                    password,
+                    course,
+                    profilePicture: cloudinaryResponse.secure_url || "empty url",
                 });
 
-                await newProduct.save();
-                console.log(`Product "${name}" uploaded successfully.`);
+                await newStudent.save();
+                console.log(`Student "${name}" uploaded successfully.`);
             } catch (err) {
                 console.error('Error processing product:', err);
             }
