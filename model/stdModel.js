@@ -8,7 +8,10 @@ const StudentSchema = new mongoose.Schema({
     profilePicture:{type: String},
     course: {type:String, required: true},
     imgUrl: {type:String, required:true},
-    registrationDate: { type: Date, default: Date.now }
+    registrationDate: { type: Date, default: Date.now },
+
+    //refference
+    attendance: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attendance' }],
 
 })
 

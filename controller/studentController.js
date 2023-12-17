@@ -1,4 +1,5 @@
-const Student = require("../model/stdModel")
+const Student = require("../model/stdModel");
+const Attendance = require('../model/attendanceModel')
 const Joi = require("joi")
 const bcrypt = require("bcrypt")
 const chalk = require('chalk');
@@ -49,6 +50,13 @@ const signupSchema = Joi.object({
   phone: Joi.string().required(),
   imgUrl: Joi.string().required(),
 });
+
+
+//checkinschema
+const checkinSchema = Joi.object({
+  ObjectId : Joi.string().required(),
+ 
+})
 
 const StudentController = {
 
@@ -146,7 +154,52 @@ const StudentController = {
 
 
 
-  }
+  },
+  async markAttendance(req, res) {
+    try {
+
+      const {error} = checkinSchema.validate(req.body);
+      if(error){
+        return res.status(400).json({message: error.details[0].message});
+      }
+
+        const { studentId} = req.body;
+
+        // Ensure the provided studentId is valid
+        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+            return res.status(400).json({ message: 'Invalid student ID.' });
+        }
+
+        // Check if the student exists
+        const student = await Student.findById(studentId);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found.' });
+        }
+
+        // Find the latest attendance record for the student
+        const latestAttendance = await Attendance.findOne({ student: studentId }).sort({ date: -1 });
+
+        // Check if the student is checking in or checking out
+        
+            // Checking in, create a new attendance record
+            const attendanceRecord = new Attendance({
+                student: studentId,
+                status: 'present',
+            });
+
+            // Save the attendance record
+            await attendanceRecord.save();
+
+            // Update the student's attendance array with the new attendance record
+            student.attendance.push(attendanceRecord._id);
+            await student.save();
+
+            return res.status(200).json({ message: 'Attendance marked successfully.' });
+        
+    } catch (err) {
+        return res.status(500).json({ message: 'Internal server error.', error: err.message });
+    }
+},
 
   
     
