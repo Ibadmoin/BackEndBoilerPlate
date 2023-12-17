@@ -134,6 +134,17 @@ const StudentController = {
   },
 
   async  getAllStudent(req,res){
+    try {
+      // Retrieve all students from the database
+      const allStudents = await Student.find();
+
+      // Return the list of students in the response
+      return res.status(200).json({ students: allStudents });
+  } catch (err) {
+      return res.status(500).json({ message: "Internal server error.", error: err.message });
+  }
+
+
 
   }
 
