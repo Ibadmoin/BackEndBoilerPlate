@@ -1,4 +1,4 @@
-const Student = require("../model/stdModal.js")
+const Student = require("../model/stdModel")
 const Joi = require("joi")
 const bcrypt = require("bcrypt")
 const chalk = require('chalk');
@@ -36,13 +36,70 @@ const updateUserSchema = Joi.object({
     name: Joi.string(),
     email: Joi.string().email(),
     password:passwordValidation,
-    phone: Joi.string()
+    phone: Joi.string(),
+    course : Joi.string()
 }).or('name', "email",'password','phone');
 
 
+const signupSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: passwordValidation,
+  course:Joi.string().required(),
+  phone: Joi.string().required(),
+  imgUrl: Joi.string().required(),
+});
+
 const StudentController = {
+
+      async registerStudent(req,res){
+
+        try{
+          
+        const {error}= signupSchema.validate(req.body);
+        if(error){
+          return res.status(200).json({messages:error.details[0].message});
+        }
+        //getting const from body
+        const {name, email, phone, course,password, imgUrl }= req.body;
+        const existingStudent = await Student.findOne({email});
+        if(existingStudent){
+          return res.status(400).json({message: "Email already exists"});
+        } 
+
+         // hashig the password
+         const hashedPass = await bcrypt.hash(password,10);
+            // Creating new user in database
+            const newStudent = new Student({
+              name,
+              email, 
+              password: hashedPass,
+              phone,
+              imgUrl,
+              course
+          });
+          
+          const token = jwt.sign(email);
+
+          
+            // Save the user in the database
+            const student = await newStudent.save();
+            return res.status(200).json({message:"Student registered successfully.",student, token})
+
+        }catch(err){
+          return res.status(500).json({message:"Internal server error."})
+        }
+
+
+      }
+
+  
     
 }
 
 
 
+
+
+
+module.exports = StudentController;

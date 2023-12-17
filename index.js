@@ -8,7 +8,7 @@ const Port = 8000 || process.env.Port;
 const UserRouter = require('./routes/userRoutes');
 const dataRouter = require('./routes/dataRoutes');
 const productRouter = require('./controller/productController');
-
+const stdRouter = require('./routes/studentRoutes');
 app.use(express.json())
 app.use(cors())
 
@@ -18,6 +18,7 @@ app.use(cors())
 app.use('/api/users',UserRouter);
 app.use('/api/data',dataRouter);
 app.use('/api/product',productRouter);
+app.use('/api/students',stdRouter);
 app.use('/',(req,res)=>{
     res.send("Redirecting")
 })
