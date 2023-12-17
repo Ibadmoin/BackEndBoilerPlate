@@ -7,6 +7,7 @@ const StudentSchema = new mongoose.Schema({
     password: {type: String, required: true},
     profilePicture:{type: String},
     course: {type:String, required: true},
+    imgUrl: {type:String, required:true}
 
 })
 
